@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FinanceManagementApp</string>
+    <string name="finance_navigation_menu">Navigation Menu</string>
+    <string name="incomes_card_heading_text">Monthly Incomes</string>
+    <string name="expenses_card_heading_text">Monthly Expenses</string>
+    <string name="balance_chart_card_heading_text">Balance Chart</string>
+</resources>
