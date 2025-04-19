@@ -35,7 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.example.financemanagementappv2.data.enums.DrawerState
 import com.example.financemanagementappv2.data.enums.Screen
+import com.example.financemanagementappv2.ui.theme.screens.FinanceExpenseScreen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceHomeScreen
+import com.example.financemanagementappv2.ui.theme.screens.FinanceIncomeScreen
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -193,6 +195,18 @@ fun ScreenContents(
         when (selectedScreen) {
             Screen.Home ->
                 FinanceHomeScreen(
+                    windowSizeClass = windowWidthSizeClass,
+                    modifier = Modifier,
+                    onDrawerClicked = onDrawerClicked
+                )
+            Screen.Income ->
+                FinanceIncomeScreen(
+                    windowSizeClass = windowWidthSizeClass,
+                    modifier = Modifier,
+                    onDrawerClicked = onDrawerClicked
+                )
+            Screen.Expense ->
+                FinanceExpenseScreen(
                     windowSizeClass = windowWidthSizeClass,
                     modifier = Modifier,
                     onDrawerClicked = onDrawerClicked

@@ -1,8 +1,18 @@
 package com.example.financemanagementappv2.data.repositories
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import com.example.financemanagementappv2.data.dao.BalanceDao
 import com.example.financemanagementappv2.data.entities.Balance
+import com.example.financemanagementappv2.data.enums.PeriodTab
+import com.example.financemanagementappv2.helpers.DateHelper
+import com.example.financemanagementappv2.helpers.DateHelper.days
+import com.example.financemanagementappv2.helpers.DateHelper.months
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class BalanceRepository(private val balanceDao: BalanceDao) {
 
@@ -14,8 +24,141 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
         balanceDao.delete(balance)
     }
 
-    fun getBalanceOfUser(): LiveData<Balance> {
-        return balanceDao.getBalanceOfUser()
+    fun getBalanceOfUser(): Flow<Balance?> {
+        return balanceDao.getLatestBalanceOfUser()
+    }
+
+    suspend fun getBalanceSnapshotsOfLastMonthOfUser(): List<Balance> {
+        return balanceDao.getBalanceSnapshotsOfPeriodOfUser(
+            DateHelper.getStartOfCurrentMonthInMillis(),
+            DateHelper.getEndOfCurrentMonthInMillis()
+        ).first()
+    }
+
+    suspend fun getBalanceSnapshotsOfLastYearOfUser(): List<Balance> {
+        return balanceDao.getBalanceSnapshotsOfPeriodOfUser(
+            DateHelper.getStartOfCurrentYearInMillis(),
+            DateHelper.getEndOfCurrentYearInMillis()
+        ).first()
+    }
+
+    fun getFormattedBalanceDataForPeriod(periodTab: PeriodTab, balanceData: List<Balance>): List<Pair<Long, Double>> {
+        val calendar = Calendar.getInstance()
+        val entries = mutableListOf<Pair<Long, Double>>()
+
+        when (periodTab) {
+            PeriodTab.Week -> {
+                calendar.timeInMillis = System.currentTimeMillis()
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                var lastKnown = 0.0
+
+                repeat(7) {
+                    val dayStart = calendar.timeInMillis
+                    val dayEnd = dayStart + 1.days
+
+                    val dailyBalances = balanceData.filter { it.timestamp in dayStart..<dayEnd }
+                    val dayBalance = if (dailyBalances.isNotEmpty()) {
+                        dailyBalances.sumOf { it.amount }
+                    } else {
+                        lastKnown
+                    }
+                    lastKnown = dayBalance
+
+                    entries += Pair(dayStart, dayBalance)
+                    calendar.add(Calendar.DAY_OF_YEAR, 1)
+                }
+            }
+            PeriodTab.Month -> {
+                calendar.timeInMillis = System.currentTimeMillis()
+                calendar.set(Calendar.DAY_OF_MONTH, 1)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                var lastKnown = 0.0
+                repeat(daysInMonth) {
+                    val dayStart = calendar.timeInMillis
+                    val dayEnd = dayStart + 1.days
+
+                    val dailyBalances = balanceData.filter { it.timestamp in dayStart..<dayEnd }
+                    val dayBalance = if (dailyBalances.isNotEmpty()) {
+                        dailyBalances.sumOf { it.amount }
+                    } else {
+                        lastKnown
+                    }
+                    lastKnown = dayBalance
+
+                    entries += Pair(dayStart, dayBalance)
+                    calendar.add(Calendar.DAY_OF_YEAR, 1)
+                }
+            }
+            PeriodTab.SixMonths -> {
+                calendar.timeInMillis = System.currentTimeMillis()
+                calendar.set(Calendar.DAY_OF_MONTH, 1)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                calendar.add(Calendar.MONTH, -5) // go back 5 months + this one = 6
+
+                var lastKnown = 0.0
+                repeat(6) {
+                    val monthStart = calendar.timeInMillis
+
+                    calendar.add(Calendar.MONTH, 1)
+                    val monthEnd = calendar.timeInMillis
+
+                    val monthlyBalances = balanceData.filter { it.timestamp in monthStart..<monthEnd }
+                    val monthBalance = if (monthlyBalances.isNotEmpty()) {
+                        monthlyBalances.sumOf { it.amount }
+                    } else {
+                        lastKnown
+                    }
+                    lastKnown = monthBalance
+
+                    entries += Pair(monthStart, monthBalance)
+                }
+            }
+            PeriodTab.OneYear -> {
+                calendar.timeInMillis = System.currentTimeMillis()
+                calendar.set(Calendar.DAY_OF_MONTH, 1)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                calendar.add(Calendar.MONTH, -11) // 12 months including current
+
+                var lastKnown = 0.0
+                repeat(12) {
+                    val monthStart = calendar.timeInMillis
+
+                    calendar.add(Calendar.MONTH, 1)
+                    val monthEnd = calendar.timeInMillis
+
+                    val monthlyBalances = balanceData.filter { it.timestamp in monthStart..<monthEnd }
+                    val monthBalance = if (monthlyBalances.isNotEmpty()) {
+                        monthlyBalances.sumOf { it.amount }
+                    } else {
+                        lastKnown
+                    }
+                    lastKnown = monthBalance
+
+                    entries += Pair(monthStart, monthBalance)
+                }
+            }
+        }
+
+        return entries
     }
 
 }

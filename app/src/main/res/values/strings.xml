@@ -1,7 +1,17 @@
 <resources>
     <string name="app_name">FinanceManagementApp</string>
     <string name="finance_navigation_menu">Navigation Menu</string>
+
     <string name="incomes_card_heading_text">Monthly Incomes</string>
     <string name="expenses_card_heading_text">Monthly Expenses</string>
+
     <string name="balance_chart_card_heading_text">Balance Chart</string>
+    <string name="balance_chart_no_balance_data">Start adding Incomes and Expenses to see how your Balance moves</string>
+    <string name="balance_chart_week_heading">1W</string>
+    <string name="balance_chart_month_heading">1M</string>
+    <string name="balance_chart_six_months_heading">6M</string>
+    <string name="balance_chart_one_year_heading">YTD</string>
+
+    <string name="goals_card_heading_text">Goal Completion</string>
+
 </resources>

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.financemanagementappv2"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -74,5 +74,7 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.56.1")
     implementation("androidx.hilt:hilt-navigation-fragment:1.2.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("co.yml:ycharts:2.1.0")
 
 }

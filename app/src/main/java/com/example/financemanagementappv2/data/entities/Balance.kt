@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 data class Balance (
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val amount: Double,
-    val lastUpdated: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis()
 )

@@ -1,8 +1,14 @@
 package com.example.financemanagementappv2.helpers
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 object DateHelper {
+    val Int.days: Long get() = this * 24L * 60 * 60 * 1000
+
+    val Int.months: Long get() = this * 30L * 24 * 60 * 60 * 1000
+
     fun getStartOfCurrentMonthInMillis(): Long {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 1)
@@ -57,5 +63,14 @@ object DateHelper {
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
         return calendar.timeInMillis
+    }
+
+    fun getLastMonthsAsStrings(count: Int): List<String> {
+        val calendar = Calendar.getInstance()
+        return (0 until count).map {
+            val monthName = SimpleDateFormat("MMM", Locale.ENGLISH).format(calendar.time)
+            calendar.add(Calendar.MONTH, -1)
+            monthName
+        }.reversed()
     }
 }

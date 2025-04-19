@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.example.financemanagementappv2.data.entities.Expenses
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 
 @Dao
@@ -27,4 +28,7 @@ interface ExpensesDao {
     @Query("SELECT * FROM Expenses WHERE date >= :startOfPeriod AND date <= :endOfPeriod ORDER BY date ASC")
     fun getAllExpensesOfPeriodOfUser(startOfPeriod: Long, endOfPeriod: Long): Flow<List<Expenses>>
 
+    suspend fun getTotalSum(): Double {
+        return getAllExpensesOfUser().first().sumOf { expense -> expense.amount }
+    }
 }

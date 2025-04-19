@@ -1,8 +1,8 @@
 package com.example.financemanagementappv2.data.repositories
 
-import androidx.lifecycle.LiveData
 import com.example.financemanagementappv2.data.dao.FinancialGoalsDao
 import com.example.financemanagementappv2.data.entities.FinancialGoals
+import kotlinx.coroutines.flow.Flow
 
 
 class FinancialGoalsRepository(private val financialGoalsDao: FinancialGoalsDao) {
@@ -15,8 +15,8 @@ class FinancialGoalsRepository(private val financialGoalsDao: FinancialGoalsDao)
         financialGoalsDao.delete(financialGoal)
     }
 
-    fun getAllFinancialGoalsByUserId(userId: Long): LiveData<List<FinancialGoals>> {
-        return financialGoalsDao.getAllFinancialGoalsByUserId(userId)
+    fun getAllFinancialGoalsOfUser(): Flow<List<FinancialGoals>> {
+        return financialGoalsDao.getAllFinancialGoalsOfUser()
     }
 
 }

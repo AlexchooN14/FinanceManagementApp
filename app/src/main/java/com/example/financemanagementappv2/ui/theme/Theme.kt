@@ -40,10 +40,16 @@ private val LightColorScheme = lightColorScheme(
 data class FinanceAppColorScheme(
     val header: Color = Color.Unspecified,
     val cardDefaultBackground: Color = Color.Unspecified,
-    val balanceChartCard: Color = Color.Unspecified,
-    val incomesCard: Color = Color.Unspecified,
-    val expensesCard: Color = Color.Unspecified,
-    val goalCompletionCard: Color = Color.Unspecified
+    val balanceChartCardBorder: Color = Color.Unspecified,
+    val balanceChartCardBackground: Color = Color.Unspecified,
+    val balanceChartCardBackgroundSelected: Color = Color.Unspecified,
+    val incomesCardBorder: Color = Color.Unspecified,
+    val incomesCardBackground: Color = Color.Unspecified,
+    val expensesCardBorder: Color = Color.Unspecified,
+    val expensesCardBackground: Color = Color.Unspecified,
+    val goalCompletionCardBorder: Color = Color.Unspecified,
+    val goalCompletionCardBackground: Color = Color.Unspecified,
+    val goalCompletionCardBubble: Color = Color.Unspecified
 )
 val LocalExtraColors = staticCompositionLocalOf {
     FinanceAppColorScheme()
@@ -51,10 +57,16 @@ val LocalExtraColors = staticCompositionLocalOf {
 private val FinanceAppColors = FinanceAppColorScheme(
     header = Purple,
     cardDefaultBackground = White,
-    balanceChartCard = DeepBlue,
-    incomesCard = DarkMintGreen,
-    expensesCard = Red,
-    goalCompletionCard = DarkLilac
+    balanceChartCardBorder = DeepBlue,
+    balanceChartCardBackground = WashedBlue,
+    balanceChartCardBackgroundSelected = LightBlue,
+    incomesCardBorder = DarkMintGreen,
+    expensesCardBorder = Red,
+    incomesCardBackground = Green,
+    expensesCardBackground = LightOrange,
+    goalCompletionCardBorder = DarkLilac,
+    goalCompletionCardBackground = Lilac,
+    goalCompletionCardBubble = DarkLilac,
 )
 
 @Composable

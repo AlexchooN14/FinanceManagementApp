@@ -80,6 +80,14 @@ abstract class AppDatabase : RoomDatabase() {
                     Expenses(amount = 22.30, description = "Lunch at cafe", date = DateHelper.getDateForDay(25), categoryId = 4)
                 )
 
+                val totalIncome = database.get().incomesDao().getTotalSum()
+                val totalExpenses = database.get().expensesDao().getTotalSum()
+                val initialBalance = totalIncome - totalExpenses
+
+                database.get().balanceDao().insert(
+                    Balance(amount = initialBalance, timestamp = System.currentTimeMillis())
+                )
+
             }
         }
     }

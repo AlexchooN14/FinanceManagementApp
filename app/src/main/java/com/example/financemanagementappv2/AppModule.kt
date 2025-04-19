@@ -2,11 +2,15 @@ package com.example.financemanagementappv2
 
 import android.content.Context
 import androidx.room.Room
+import com.example.financemanagementappv2.data.dao.BalanceDao
 import com.example.financemanagementappv2.data.dao.ExpensesDao
+import com.example.financemanagementappv2.data.dao.FinancialGoalsDao
 import com.example.financemanagementappv2.data.dao.IncomesDao
 import com.example.financemanagementappv2.data.db.AppDatabase
 import com.example.financemanagementappv2.data.entities.Expenses
+import com.example.financemanagementappv2.data.repositories.BalanceRepository
 import com.example.financemanagementappv2.data.repositories.ExpensesRepository
+import com.example.financemanagementappv2.data.repositories.FinancialGoalsRepository
 import com.example.financemanagementappv2.data.repositories.IncomesRepository
 import dagger.Module
 import dagger.Provides
@@ -49,8 +53,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideIncomesRepository(incomesDao: IncomesDao): IncomesRepository {
-        return IncomesRepository(incomesDao)
+    fun provideIncomesRepository(incomesDao: IncomesDao, balanceDao: BalanceDao): IncomesRepository {
+        return IncomesRepository(incomesDao, balanceDao)
     }
 
     @Provides
@@ -61,7 +65,31 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideExpensesRepository(expensesDao: ExpensesDao): ExpensesRepository {
-        return ExpensesRepository(expensesDao)
+    fun provideExpensesRepository(expensesDao: ExpensesDao, balanceDao: BalanceDao): ExpensesRepository {
+        return ExpensesRepository(expensesDao, balanceDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBalanceDao(appDatabase: AppDatabase): BalanceDao {
+        return appDatabase.balanceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBalanceRepository(balanceDao: BalanceDao): BalanceRepository {
+        return BalanceRepository(balanceDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFinancialGoalsDao(appDatabase: AppDatabase): FinancialGoalsDao {
+        return appDatabase.financialGoalsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFinancialGoalsRepository(financialGoalsDao: FinancialGoalsDao): FinancialGoalsRepository {
+        return FinancialGoalsRepository(financialGoalsDao)
     }
 }
