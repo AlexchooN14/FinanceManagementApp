@@ -16,6 +16,10 @@ class CategoriesRepository(private val categoriesDao: CategoriesDao) {
         categoriesDao.delete(category)
     }
 
+    fun getCategoryByCategoryId(id: Long): Categories {
+        return categoriesDao.getCategoryByCategoryId(id)
+    }
+
     fun getAllExpenseCategories(): Flow<List<Categories>> {
         return categoriesDao.getAllCategoriesByFinancialType(CategoryFinancialType.EXPENSE)
     }
