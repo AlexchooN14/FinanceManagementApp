@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financemanagementappv2.data.entities.Balance
+import com.example.financemanagementappv2.data.entities.FinancialGoals
 import com.example.financemanagementappv2.data.enums.PeriodTab
 import com.example.financemanagementappv2.data.repositories.BalanceRepository
 import com.example.financemanagementappv2.data.repositories.ExpensesRepository
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -47,13 +49,14 @@ class HomeScreenViewModel @Inject constructor(
         _balanceSelectedTab.value = tab
     }
 
-    private fun obtainData() {
+    internal fun obtainData() {
         viewModelScope.launch {
             val monthlyIncomeSum = incomesRepository.getSumOfAllIncomesOfCurrentMonthOfUser()
             val monthlyExpenseSum = expensesRepository.getSumOfAllExpensesOfCurrentMonthOfUser()
             val yearlyBalanceData = balanceRepository.getBalanceSnapshotsOfLastYearOfUser()
             val currentBalance = balanceRepository.getBalanceOfUser().firstOrNull()
             var balanceAmount = currentBalance?.amount ?: 0.0
+            val financialGoals = financialGoalsRepository.getAllFinancialGoalsOfUser().first()
 
             val circularOverlayIncomeProgress = if (balanceAmount <= 0.0) {
                 if (monthlyIncomeSum == 0.0) 0f else 1f
@@ -72,7 +75,9 @@ class HomeScreenViewModel @Inject constructor(
                 monthlyExpenseSum = monthlyExpenseSum,
                 circularOverlayIncomeProgress = circularOverlayIncomeProgress,
                 circularOverlayExpenseProgress = circularOverlayExpenseProgress,
-                yearlyBalanceData = yearlyBalanceData
+                yearlyBalanceData = yearlyBalanceData,
+                currentBalance = balanceAmount,
+                financialGoals = financialGoals
             )
         }
     }
@@ -103,5 +108,7 @@ data class HomeScreenUiState(
     val circularOverlayIncomeProgress:Float = 0f,
     val circularOverlayExpenseProgress:Float = 0f,
     val yearlyBalanceData: List<Balance> = emptyList<Balance>(),
+    val currentBalance: Double = 0.0,
+    val financialGoals: List<FinancialGoals> = emptyList<FinancialGoals>()
 )
 

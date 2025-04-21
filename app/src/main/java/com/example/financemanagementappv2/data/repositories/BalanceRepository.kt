@@ -49,14 +49,10 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
         when (periodTab) {
             PeriodTab.Week -> {
                 calendar.timeInMillis = System.currentTimeMillis()
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+                calendar.add(Calendar.DAY_OF_YEAR, -6)
 
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
-
-                var lastKnown = 0.0
+                val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
+                var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
                 repeat(7) {
                     val dayStart = calendar.timeInMillis
@@ -64,7 +60,7 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
 
                     val dailyBalances = balanceData.filter { it.timestamp in dayStart..<dayEnd }
                     val dayBalance = if (dailyBalances.isNotEmpty()) {
-                        dailyBalances.sumOf { it.amount }
+                        dailyBalances.last().amount
                     } else {
                         lastKnown
                     }
@@ -83,14 +79,16 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 calendar.set(Calendar.MILLISECOND, 0)
 
                 val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-                var lastKnown = 0.0
+                val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
+                var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
+
                 repeat(daysInMonth) {
                     val dayStart = calendar.timeInMillis
                     val dayEnd = dayStart + 1.days
 
                     val dailyBalances = balanceData.filter { it.timestamp in dayStart..<dayEnd }
                     val dayBalance = if (dailyBalances.isNotEmpty()) {
-                        dailyBalances.sumOf { it.amount }
+                        dailyBalances.last().amount
                     } else {
                         lastKnown
                     }
@@ -109,8 +107,9 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 calendar.set(Calendar.MILLISECOND, 0)
 
                 calendar.add(Calendar.MONTH, -5) // go back 5 months + this one = 6
+                val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
+                var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
-                var lastKnown = 0.0
                 repeat(6) {
                     val monthStart = calendar.timeInMillis
 
@@ -119,7 +118,7 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
 
                     val monthlyBalances = balanceData.filter { it.timestamp in monthStart..<monthEnd }
                     val monthBalance = if (monthlyBalances.isNotEmpty()) {
-                        monthlyBalances.sumOf { it.amount }
+                        monthlyBalances.last().amount
                     } else {
                         lastKnown
                     }
@@ -137,8 +136,9 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 calendar.set(Calendar.MILLISECOND, 0)
 
                 calendar.add(Calendar.MONTH, -11) // 12 months including current
+                val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
+                var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
-                var lastKnown = 0.0
                 repeat(12) {
                     val monthStart = calendar.timeInMillis
 
@@ -147,7 +147,7 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
 
                     val monthlyBalances = balanceData.filter { it.timestamp in monthStart..<monthEnd }
                     val monthBalance = if (monthlyBalances.isNotEmpty()) {
-                        monthlyBalances.sumOf { it.amount }
+                        monthlyBalances.last().amount
                     } else {
                         lastKnown
                     }

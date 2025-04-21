@@ -19,5 +19,5 @@ data class Incomes (
     val amount: Double,
     val description: String,
     val date: Long,
-    val categoryId: Int,
+    val categoryId: Long,
 )

@@ -3,12 +3,14 @@ package com.example.financemanagementappv2
 import android.content.Context
 import androidx.room.Room
 import com.example.financemanagementappv2.data.dao.BalanceDao
+import com.example.financemanagementappv2.data.dao.CategoriesDao
 import com.example.financemanagementappv2.data.dao.ExpensesDao
 import com.example.financemanagementappv2.data.dao.FinancialGoalsDao
 import com.example.financemanagementappv2.data.dao.IncomesDao
 import com.example.financemanagementappv2.data.db.AppDatabase
 import com.example.financemanagementappv2.data.entities.Expenses
 import com.example.financemanagementappv2.data.repositories.BalanceRepository
+import com.example.financemanagementappv2.data.repositories.CategoriesRepository
 import com.example.financemanagementappv2.data.repositories.ExpensesRepository
 import com.example.financemanagementappv2.data.repositories.FinancialGoalsRepository
 import com.example.financemanagementappv2.data.repositories.IncomesRepository
@@ -92,4 +94,17 @@ object AppModule {
     fun provideFinancialGoalsRepository(financialGoalsDao: FinancialGoalsDao): FinancialGoalsRepository {
         return FinancialGoalsRepository(financialGoalsDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideCategoriesDao(appDatabase: AppDatabase): CategoriesDao {
+        return appDatabase.categoriesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoriesRepository(categoriesDao: CategoriesDao): CategoriesRepository {
+        return CategoriesRepository(categoriesDao)
+    }
+
 }

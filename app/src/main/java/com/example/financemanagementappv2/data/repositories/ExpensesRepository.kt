@@ -16,7 +16,7 @@ class ExpensesRepository(private val expensesDao: ExpensesDao, private val balan
 
         val expensesSum = expenses.sumOf { it.amount }
         val latestBalance = balanceDao.getLatestBalanceOfUser().first()?.amount ?: 0.0
-        val newBalance = latestBalance + expensesSum
+        val newBalance = latestBalance - expensesSum
         balanceDao.insert(Balance(amount = newBalance, timestamp = System.currentTimeMillis()))
     }
 

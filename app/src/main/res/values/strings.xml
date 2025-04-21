@@ -13,5 +13,21 @@
     <string name="balance_chart_one_year_heading">YTD</string>
 
     <string name="goals_card_heading_text">Goal Completion</string>
+    <string name="goals_card_no_goals_data">Start adding Financial Goals to motivate you reach your target</string>
 
+    <string name="pie_chart_no_stats_text">Add Data to see Chart</string>
+
+    <string name="income_screen_stats_heading">Income Distribution</string>
+    <string name="income_screen_money_form_form_heading">Add New Income</string>
+    <string name="income_screen_money_form_field_text">New Income Amount</string>
+    <string name="income_screen_money_form_categories_text">Choose income category</string>
+
+    <string name="money_form_error_invalid_money">Enter a valid amount of money</string>
+    <string name="money_form_error_no_category">Select a category</string>
+    <string name="money_form_successfully_added">Successfully Added!</string>
+
+    <string name="expense_screen_stats_heading">Expense Distribution</string>
+    <string name="expense_screen_money_form_form_heading">Add New Expense</string>
+    <string name="expense_screen_money_form_field_text">New Expense Amount</string>
+    <string name="expense_screen_money_form_categories_text">Choose Expense category</string>
 </resources>

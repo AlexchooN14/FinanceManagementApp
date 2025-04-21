@@ -91,12 +91,6 @@ fun LastMonthExpensesCard(
     )
 }
 
-@Preview
-@Composable
-fun GoalCompletionCard(modifier: Modifier = Modifier) {
-
-}
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun TwoLineInfoCard(
@@ -219,20 +213,20 @@ fun CircularProgressOverlay(
 fun BasicInformationalCard(
     modifier: Modifier = Modifier,
     borderColor: Color,
-    backgroundColor: Color,
+    backgroundColor: Color = FinanceManagementAppV2Theme.financeAppColors.cardDefaultBackground,
     content: @Composable () -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = FinanceManagementAppV2Theme.financeAppColors.cardDefaultBackground
+            containerColor = backgroundColor
         ),
         modifier = modifier
             .padding(8.dp),
         border = BorderStroke(3.dp, borderColor)
     ) {
         Box(
-            modifier = Modifier.background(backgroundColor)
+            modifier = Modifier.fillMaxSize()
         ) {
             content()
         }

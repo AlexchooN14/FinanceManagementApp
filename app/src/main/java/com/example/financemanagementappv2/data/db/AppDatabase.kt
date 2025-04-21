@@ -88,6 +88,24 @@ abstract class AppDatabase : RoomDatabase() {
                     Balance(amount = initialBalance, timestamp = System.currentTimeMillis())
                 )
 
+                database.get().financialGoalsDao().insertAll(
+                    FinancialGoals(
+                        goalName = "Vacation to Greece",
+                        targetAmount = 4000.0,
+                        dueDate = System.currentTimeMillis() + 60L * 24 * 60 * 60 * 1000 // in 60 days
+                    ),
+                    FinancialGoals(
+                        goalName = "New Laptop",
+                        targetAmount = 1200.0,
+                        dueDate = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000 // in 30 days
+                    ),
+                    FinancialGoals(
+                        goalName = "Emergency Fund",
+                        targetAmount = 5000.0,
+                        dueDate = System.currentTimeMillis() + 180L * 24 * 60 * 60 * 1000 // in 180 days
+                    )
+                )
+
             }
         }
     }

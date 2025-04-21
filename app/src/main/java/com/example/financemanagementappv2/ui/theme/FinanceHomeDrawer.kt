@@ -189,7 +189,7 @@ fun ScreenContents(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier
+        modifier.fillMaxSize()
     ) {
         // when is like a switch case, but more powerful
         when (selectedScreen) {
