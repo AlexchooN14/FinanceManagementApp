@@ -81,8 +81,6 @@ fun GoalsCard(
                                     .height(50.dp)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-                            Log.d("GoalBubble", "goal.targetAmount: $goal.targetAmount")
-                            Log.d("GoalBubble", "currentBalance: $currentBalance")
                             GoalBubble(
                                 completionRate = ((currentBalance / goal.targetAmount ) * 100).coerceIn(0.0, 100.0).toInt().toString(),
                                 metric = "%",

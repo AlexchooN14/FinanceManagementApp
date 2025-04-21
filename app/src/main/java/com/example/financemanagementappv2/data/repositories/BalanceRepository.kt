@@ -1,18 +1,12 @@
 package com.example.financemanagementappv2.data.repositories
 
-import android.util.Log
 import com.example.financemanagementappv2.data.dao.BalanceDao
 import com.example.financemanagementappv2.data.entities.Balance
 import com.example.financemanagementappv2.data.enums.PeriodTab
 import com.example.financemanagementappv2.helpers.DateHelper
 import com.example.financemanagementappv2.helpers.DateHelper.days
-import com.example.financemanagementappv2.helpers.DateHelper.months
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class BalanceRepository(private val balanceDao: BalanceDao) {
 
@@ -24,22 +18,22 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
         balanceDao.delete(balance)
     }
 
-    fun getBalanceOfUser(): Flow<Balance?> {
+    fun getBalanceOfUser(): Flow<Balance> {
         return balanceDao.getLatestBalanceOfUser()
     }
 
-    suspend fun getBalanceSnapshotsOfLastMonthOfUser(): List<Balance> {
+    fun getBalanceSnapshotsOfLastMonthOfUser(): Flow<List<Balance>> {
         return balanceDao.getBalanceSnapshotsOfPeriodOfUser(
             DateHelper.getStartOfCurrentMonthInMillis(),
             DateHelper.getEndOfCurrentMonthInMillis()
-        ).first()
+        )
     }
 
-    suspend fun getBalanceSnapshotsOfLastYearOfUser(): List<Balance> {
+    fun getBalanceSnapshotsOfLastYearOfUser(): Flow<List<Balance>> {
         return balanceDao.getBalanceSnapshotsOfPeriodOfUser(
             DateHelper.getStartOfCurrentYearInMillis(),
             DateHelper.getEndOfCurrentYearInMillis()
-        ).first()
+        )
     }
 
     fun getFormattedBalanceDataForPeriod(periodTab: PeriodTab, balanceData: List<Balance>): List<Pair<Long, Double>> {

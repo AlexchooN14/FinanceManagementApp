@@ -55,10 +55,7 @@ fun FinanceHomeScreen(
         // To get the safe area dimensions for the bottom and horizontal edges of the screen.
         // It takes into account things like the navigation bar or system bars, so the content doesn't get hidden behind them.
         val insets = WindowInsets.safeDrawing.only( WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal )
-
         val uiState = viewModel.uiState.collectAsState()
-        val selectedTab = viewModel.balanceSelectedTab.collectAsState().value
-        val balanceData = viewModel.filteredBalanceData.collectAsState().value
 
         // FlowRow Arranges children horizontally and wraps to the next line if there's no space
         // Row does not wrap and needs horizontal scroll if content overflow
@@ -70,12 +67,12 @@ fun FinanceHomeScreen(
             verticalArrangement = Arrangement.Center,
             maxItemsInEachRow = 3
         ) {
-            key(balanceData.hashCode()) {
+            key(uiState.value.filteredBalanceData.hashCode()) {
                 BalanceChartGraphCard(
-                    balanceData = balanceData,
+                    balanceData = uiState.value.filteredBalanceData,
                     labelFormatter = { viewModel.labelFormatter(it) },
                     onTabSelected = { viewModel.onTabSelected(it) },
-                    selectedTab = selectedTab,
+                    selectedTab = uiState.value.balanceSelectedTab,
                     modifier = Modifier.widthIn(max = 600.dp)
                 )
             }

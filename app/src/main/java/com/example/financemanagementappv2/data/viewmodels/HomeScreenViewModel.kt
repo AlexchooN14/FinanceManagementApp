@@ -42,54 +42,60 @@ class HomeScreenViewModel @Inject constructor(
     val balanceSelectedTab = _balanceSelectedTab.asStateFlow()
 
     init {
-        obtainData()
+        observeUiState()
     }
 
     fun onTabSelected(tab: PeriodTab) {
         _balanceSelectedTab.value = tab
     }
 
-    internal fun obtainData() {
+    private fun observeUiState() {
         viewModelScope.launch {
-            val monthlyIncomeSum = incomesRepository.getSumOfAllIncomesOfCurrentMonthOfUser()
-            val monthlyExpenseSum = expensesRepository.getSumOfAllExpensesOfCurrentMonthOfUser()
-            val yearlyBalanceData = balanceRepository.getBalanceSnapshotsOfLastYearOfUser()
-            val currentBalance = balanceRepository.getBalanceOfUser().firstOrNull()
-            var balanceAmount = currentBalance?.amount ?: 0.0
-            val financialGoals = financialGoalsRepository.getAllFinancialGoalsOfUser().first()
+            combine(
+                _balanceSelectedTab,
+                incomesRepository.getAllIncomesOfCurrentMonthOfUser(),
+                expensesRepository.getAllExpensesOfCurrentMonthOfUser(),
+                balanceRepository.getBalanceOfUser(),
+                financialGoalsRepository.getAllFinancialGoalsOfUser(),
+            ) { selectedTab, incomeRepositoryData, expenseRepositoryData, balanceRepositoryData, financialGoalsRepositoryData ->
 
-            val circularOverlayIncomeProgress = if (balanceAmount <= 0.0) {
-                if (monthlyIncomeSum == 0.0) 0f else 1f
-            } else {
-                (monthlyIncomeSum / balanceAmount).coerceIn(0.0, 1.0).toFloat()
+                val monthlyIncomeSum = incomeRepositoryData.sumOf { it.amount }
+                val monthlyExpenseSum = expenseRepositoryData.sumOf { it.amount }
+                val currentBalance = balanceRepositoryData.amount
+                val financialGoals = financialGoalsRepositoryData
+                val yearlyBalanceData =
+                    balanceRepository.getBalanceSnapshotsOfLastYearOfUser().first()
+
+                val circularOverlayIncomeProgress = if (currentBalance <= 0.0) {
+                    if (monthlyIncomeSum == 0.0) 0f else 1f
+                } else {
+                    (monthlyIncomeSum / currentBalance).coerceIn(0.0, 1.0).toFloat()
+                }
+
+                val circularOverlayExpenseProgress = if (currentBalance <= 0.0) {
+                    if (monthlyExpenseSum == 0.0) 0f else 0.5f
+                } else {
+                    (monthlyExpenseSum / currentBalance).coerceIn(0.0, 1.0).toFloat()
+                }
+
+                HomeScreenUiState(
+                    balanceSelectedTab = selectedTab,
+                    monthlyIncomeSum = monthlyIncomeSum,
+                    monthlyExpenseSum = monthlyExpenseSum,
+                    circularOverlayIncomeProgress = circularOverlayIncomeProgress,
+                    circularOverlayExpenseProgress = circularOverlayExpenseProgress,
+                    filteredBalanceData = balanceRepository.getFormattedBalanceDataForPeriod(
+                        selectedTab,
+                        yearlyBalanceData
+                    ),
+                    currentBalance = currentBalance,
+                    financialGoals = financialGoals
+                )
+            }.collect { uiState ->
+                _uiState.value = uiState
             }
-
-            val circularOverlayExpenseProgress = if (balanceAmount <= 0.0) {
-                if (monthlyExpenseSum == 0.0) 0f else 1f
-            } else {
-                (monthlyExpenseSum / balanceAmount).coerceIn(0.0, 1.0).toFloat()
-            }
-
-            _uiState.value = HomeScreenUiState(
-                monthlyIncomeSum = monthlyIncomeSum,
-                monthlyExpenseSum = monthlyExpenseSum,
-                circularOverlayIncomeProgress = circularOverlayIncomeProgress,
-                circularOverlayExpenseProgress = circularOverlayExpenseProgress,
-                yearlyBalanceData = yearlyBalanceData,
-                currentBalance = balanceAmount,
-                financialGoals = financialGoals
-            )
         }
     }
-
-    val filteredBalanceData: StateFlow<List<Pair<Long, Double>>> =
-        combine(
-            _balanceSelectedTab,
-            _uiState.map { it.yearlyBalanceData }  // Make sure you're observing the data!
-        ) { selectedTab, yearlyData ->
-            balanceRepository.getFormattedBalanceDataForPeriod(selectedTab, yearlyData)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
 
     fun labelFormatter(timestamp: Long): String {
         val formatter = when (balanceSelectedTab.value) {
@@ -103,11 +109,12 @@ class HomeScreenViewModel @Inject constructor(
 }
 
 data class HomeScreenUiState(
+    val balanceSelectedTab: PeriodTab = PeriodTab.Week,
     val monthlyIncomeSum: Double = 0.0,
     val monthlyExpenseSum: Double = 0.0,
-    val circularOverlayIncomeProgress:Float = 0f,
-    val circularOverlayExpenseProgress:Float = 0f,
-    val yearlyBalanceData: List<Balance> = emptyList<Balance>(),
+    val circularOverlayIncomeProgress: Float = 0f,
+    val circularOverlayExpenseProgress: Float = 0f,
+    val filteredBalanceData: List<Pair<Long, Double>> = emptyList<Pair<Long, Double>>(),
     val currentBalance: Double = 0.0,
     val financialGoals: List<FinancialGoals> = emptyList<FinancialGoals>()
 )
