@@ -40,6 +40,7 @@ import com.example.financemanagementappv2.ui.theme.screens.FinanceExpenseScreen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceGoalScreen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceHomeScreen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceIncomeScreen
+import com.example.financemanagementappv2.ui.theme.screens.FinanceSettingsScreen
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -220,10 +221,11 @@ fun ScreenContents(
                     onDrawerClicked = onDrawerClicked
                 )
             Screen.Settings ->
-                Surface (
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                }
+                FinanceSettingsScreen(
+                    windowSizeClass = windowWidthSizeClass,
+                    modifier = Modifier,
+                    onDrawerClicked = onDrawerClicked
+                )
         }
     }
 }

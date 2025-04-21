@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 interface IncomesDao {
 
     @Insert
-    suspend fun insertAll(vararg incomes: Incomes)
+    suspend fun insertAll(income: Incomes)
 
     @Delete
     suspend fun delete(income: Incomes)

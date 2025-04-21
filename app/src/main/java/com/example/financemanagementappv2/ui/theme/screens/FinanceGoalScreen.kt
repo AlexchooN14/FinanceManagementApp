@@ -4,11 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
@@ -22,7 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -30,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.financemanagementappv2.R
-import com.example.financemanagementappv2.ui.theme.HeadingStyle
 import com.example.financemanagementappv2.ui.theme.VerySmallHeadingStyle
 import com.example.financemanagementappv2.ui.theme.cards.GoalFormCard
 
@@ -67,10 +64,10 @@ fun FinanceGoalScreen(
             maxItemsInEachRow = 3
         ) {
 
-            FlowColumn(
+            Column (
                 modifier = Modifier
                     .fillMaxSize(),
-                horizontalArrangement = Arrangement.Start,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
@@ -90,10 +87,11 @@ fun FinanceGoalScreen(
                     color = Color.Gray
                 )
 
-                GoalFormCard(
-                    modifier = Modifier.widthIn(max = 400.dp)
-                )
+
             }
+            GoalFormCard(
+                modifier = Modifier.widthIn(max = 600.dp)
+            )
         }
 
 //        FlowRow(

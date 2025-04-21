@@ -1,5 +1,6 @@
 package com.example.financemanagementappv2.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,14 +30,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financemanagementappv2.R
 import com.example.financemanagementappv2.data.entities.Categories
 import com.example.financemanagementappv2.data.viewmodels.ExpenseScreenViewModel
-import com.example.financemanagementappv2.ui.theme.HeadingStyle
 import com.example.financemanagementappv2.ui.theme.cards.MoneyFormCard
 import com.example.financemanagementappv2.ui.theme.cards.PieChartCard
 
@@ -81,9 +82,12 @@ fun FinanceExpenseScreen(
                     .padding(vertical = 12.dp)
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = HeadingStyle
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp,
             )
 
+            Log.d("Composable", "categoryExpensesMapped: ${uiState.value.categoryExpensesMapped}")
             PieChartCard(
                 data = uiState.value.categoryExpensesMapped
             )

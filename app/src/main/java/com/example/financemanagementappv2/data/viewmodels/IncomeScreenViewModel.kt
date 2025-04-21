@@ -60,10 +60,9 @@ class IncomeScreenViewModel @Inject constructor(
 
 
     private fun mapIncomesInPercentToCategories(incomes: List<Incomes>, categories: List<Categories>): Map<String, Double> {
+        if (incomes.isEmpty()) return emptyMap()
 
         val totalIncome = incomes.sumOf { it -> it.amount }
-
-        if (totalIncome == 0.0) return emptyMap()
 
         val incomeByCategory: Map<Long, Double> = incomes.groupBy { it.categoryId }.mapValues { entry -> entry.value.sumOf { it.amount } }
 

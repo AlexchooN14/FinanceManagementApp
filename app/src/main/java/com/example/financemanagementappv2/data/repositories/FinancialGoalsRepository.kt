@@ -11,6 +11,10 @@ class FinancialGoalsRepository(private val financialGoalsDao: FinancialGoalsDao)
         financialGoalsDao.insertAll(*financialGoals)
     }
 
+    suspend fun insertAll(financialGoals: List<FinancialGoals>) {
+        financialGoals.forEach { financialGoalsDao.insertAll(it) }
+    }
+
     suspend fun delete(financialGoal: FinancialGoals) {
         financialGoalsDao.delete(financialGoal)
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.FinanceManagementAppV2" parent="android:Theme.Material.Light.NoActionBar">
+
+        <!-- Splash screen background color -->
+        <item name="android:windowSplashScreenBackground">@color/custom_logo_background</item>
+
+        <!-- Splash screen icon -->
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/custom_logo</item>
+
+        <!-- Optional: icon scaling -->
+        <item name="android:windowSplashScreenIconBackgroundColor">@null</item>
+
+    </style>
+</resources>

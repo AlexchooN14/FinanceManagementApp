@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -23,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.financemanagementappv2.data.viewmodels.HomeScreenViewModel
 import com.example.financemanagementappv2.ui.theme.cards.BalanceChartGraphCard
@@ -78,7 +76,9 @@ fun FinanceHomeScreen(
             }
 
             key(uiState.value.hashCode()) {
-                if (windowSizeClass == WindowWidthSizeClass.Compact) {
+                FlowRow(
+                    maxItemsInEachRow = 2
+                ) {
                     LastMonthIncomesCard(
                         incomeValue = uiState.value.monthlyIncomeSum,
                         incomeProgress = uiState.value.circularOverlayIncomeProgress
@@ -91,23 +91,6 @@ fun FinanceHomeScreen(
                         goals = uiState.value.financialGoals,
                         currentBalance = uiState.value.currentBalance
                     )
-                } else {
-                    // Arranges items top to bottom, like a Column
-                    // But if it runs out of vertical space, it wraps to the next column
-                    FlowColumn {
-                        LastMonthIncomesCard(
-                            incomeValue = uiState.value.monthlyIncomeSum,
-                            incomeProgress = uiState.value.circularOverlayIncomeProgress
-                        )
-                        LastMonthExpensesCard(
-                            expenseValue = uiState.value.monthlyExpenseSum,
-                            expenseProgress = uiState.value.circularOverlayExpenseProgress
-                        )
-                        GoalsCard(
-                            goals = uiState.value.financialGoals,
-                            currentBalance = uiState.value.currentBalance
-                        )
-                    }
                 }
             }
         }

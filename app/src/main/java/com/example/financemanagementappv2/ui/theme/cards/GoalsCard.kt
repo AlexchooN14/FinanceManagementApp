@@ -41,7 +41,7 @@ fun GoalsCard(
 ) {
     BasicInformationalCard(
         modifier = modifier
-            .widthIn(max = 400.dp)
+            .widthIn(max = 600.dp)
             .heightIn(min = 200.dp),
         borderColor = FinanceManagementAppV2Theme.financeAppColors.goalCompletionCardBorder,
         backgroundColor = FinanceManagementAppV2Theme.financeAppColors.goalCompletionCardBackground

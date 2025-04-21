@@ -11,13 +11,21 @@ import kotlinx.coroutines.flow.first
 
 class IncomesRepository(private val incomesDao: IncomesDao, private val balanceDao: BalanceDao) {
 
-    suspend fun insertAll(vararg incomes: Incomes) {
-        incomesDao.insertAll(*incomes)
+    suspend fun insertAll(income: Incomes) {
+        incomesDao.insertAll(income)
 
-        val incomesSum = incomes.sumOf { it.amount }
         val latestBalance = balanceDao.getLatestBalanceOfUser().first()?.amount ?: 0.0
-        val newBalance = latestBalance + incomesSum
-        balanceDao.insert(Balance(amount = newBalance, timestamp = System.currentTimeMillis()))
+        val newBalance = latestBalance + income.amount
+        balanceDao.insert(Balance(amount = newBalance, timestamp = income.date))
+    }
+
+    suspend fun insertAll(incomes: List<Incomes>) {
+        incomes.forEach { income ->
+            incomesDao.insertAll(income)
+            val latestBalance = balanceDao.getLatestBalanceOfUser().first()?.amount ?: 0.0
+            val newBalance = latestBalance + income.amount
+            balanceDao.insert(Balance(amount = newBalance, timestamp = income.date))
+        }
     }
 
     suspend fun delete(income: Incomes) {

@@ -1,6 +1,7 @@
 package com.example.financemanagementappv2.ui.theme.cards
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -41,6 +42,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -103,7 +105,13 @@ fun TwoLineInfoCard(
 ) {
     BasicInformationalCard(
         borderColor = borderColor,
-        modifier = modifier.size(200.dp),
+        modifier = modifier
+            .then(
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    Modifier.width(600.dp)
+                } else
+                    Modifier.width(200.dp)
+            ),
         backgroundColor = backgroundColor
     ) {
         BoxWithConstraints(
@@ -125,7 +133,7 @@ fun TwoLineInfoCard(
                             .size(Dimensions.HorizontalCircularProgressSize)
                             .padding( start = 12.dp )
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(36.dp))
                     Column(
                         modifier = Modifier
                             .align(CenterVertically)

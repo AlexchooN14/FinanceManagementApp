@@ -45,7 +45,8 @@ val SmallHeadingStyle = TextStyle(
     fontSize = 16.sp,
     fontWeight = FontWeight(600),
     letterSpacing = 0.5.sp,
-    fontFamily = FontFamily.Default
+    fontFamily = FontFamily.Default,
+    color = BlackGray
 )
 
 val VerySmallHeadingStyle = TextStyle(
@@ -59,5 +60,6 @@ val HeadingStyle = TextStyle(
     fontSize = 24.sp,
     fontWeight = FontWeight(600),
     letterSpacing = 0.5.sp,
-    fontFamily = FontFamily.Default
+    fontFamily = FontFamily.Default,
+    color = BlackGray
 )

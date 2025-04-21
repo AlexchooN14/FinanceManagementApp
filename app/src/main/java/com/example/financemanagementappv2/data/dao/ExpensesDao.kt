@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.first
 interface ExpensesDao {
 
     @Insert
-    suspend fun insertAll(vararg expenses: Expenses)
+    suspend fun insertAll(expense: Expenses)
 
     @Delete
     suspend fun delete(expense: Expenses)

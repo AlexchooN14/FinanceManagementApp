@@ -1,6 +1,7 @@
 package com.example.financemanagementappv2.ui.theme.cards
 
 import android.app.DatePickerDialog
+import android.content.res.Configuration
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,9 +34,12 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -68,7 +72,12 @@ fun GoalFormCard(
     FlowColumn(
         modifier = modifier
             .fillMaxHeight()
-            .widthIn(max = 400.dp),
+            .then(
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    Modifier.width(600.dp)
+                } else
+                    Modifier.width(400.dp)
+            ),
         horizontalArrangement = Arrangement.Center,
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {

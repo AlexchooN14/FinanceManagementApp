@@ -11,13 +11,21 @@ import kotlinx.coroutines.flow.first
 
 class ExpensesRepository(private val expensesDao: ExpensesDao, private val balanceDao: BalanceDao) {
 
-    suspend fun insertAll(vararg expenses: Expenses) {
-        expensesDao.insertAll(*expenses)
+    suspend fun insertAll(expense: Expenses) {
+        expensesDao.insertAll(expense)
 
-        val expensesSum = expenses.sumOf { it.amount }
         val latestBalance = balanceDao.getLatestBalanceOfUser().first()?.amount ?: 0.0
-        val newBalance = latestBalance - expensesSum
-        balanceDao.insert(Balance(amount = newBalance, timestamp = System.currentTimeMillis()))
+        val newBalance = latestBalance - expense.amount
+        balanceDao.insert(Balance(amount = newBalance, timestamp = expense.date))
+    }
+
+    suspend fun insertAll(expenses: List<Expenses>) {
+        expenses.forEach { expense ->
+            expensesDao.insertAll(expense)
+            val latestBalance = balanceDao.getLatestBalanceOfUser().first()?.amount ?: 0.0
+            val newBalance = latestBalance - expense.amount
+            balanceDao.insert(Balance(amount = newBalance, timestamp = expense.date))
+        }
     }
 
     suspend fun delete(expense: Expenses) {

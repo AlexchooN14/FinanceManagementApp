@@ -1,5 +1,6 @@
 package com.example.financemanagementappv2.data.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financemanagementappv2.data.entities.Categories
@@ -8,13 +9,8 @@ import com.example.financemanagementappv2.data.repositories.CategoriesRepository
 import com.example.financemanagementappv2.data.repositories.ExpensesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,6 +32,7 @@ class ExpenseScreenViewModel @Inject constructor(
                 expensesRepository.getAllExpensesOfCurrentMonthOfUser(),
                 categoriesRepository.getAllExpenseCategories()
             ) { expensesRepositoryData, categoriesRepositoryData ->
+                Log.d("VM -> ", "expensesRepositoryData: $expensesRepositoryData")
 
                 ExpenseScreenUiState(
                     monthlyExpenses = expensesRepositoryData,
@@ -64,14 +61,14 @@ class ExpenseScreenViewModel @Inject constructor(
         }
     }
 
-
     private fun mapExpensesInPercentToCategories(expenses: List<Expenses>, categories: List<Categories>): Map<String, Double> {
+        if (expenses.isEmpty()) return emptyMap()
 
         val total = expenses.sumOf { it -> it.amount }
 
-        if (total == 0.0) return emptyMap()
-
         val amountByCategory: Map<Long, Double> = expenses.groupBy { it.categoryId }.mapValues { entry -> entry.value.sumOf { it.amount } }
+
+        Log.d("VM ->", "amountByCategory: $amountByCategory")
 
         return categories
             .filter { category -> (amountByCategory[category.id] ?: 0.0) > 0.0 }

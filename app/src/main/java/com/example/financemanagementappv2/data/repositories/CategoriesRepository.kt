@@ -12,6 +12,10 @@ class CategoriesRepository(private val categoriesDao: CategoriesDao) {
         categoriesDao.insertAll(*categories)
     }
 
+    suspend fun insertAll(categories: List<Categories>) {
+        categories.forEach { categoriesDao.insertAll(it) }
+    }
+
     suspend fun delete(category: Categories) {
         categoriesDao.delete(category)
     }
