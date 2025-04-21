@@ -53,7 +53,6 @@ fun FinanceExpenseScreen(
     val insets = WindowInsets.safeDrawing.only( WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal )
 
     val uiState = viewModel.uiState.collectAsState()
-    val categoryExpensesMapped = viewModel.categoryExpensesMapped.collectAsState().value
 
     Column(
         modifier = modifier
@@ -86,7 +85,7 @@ fun FinanceExpenseScreen(
             )
 
             PieChartCard(
-                data = categoryExpensesMapped
+                data = uiState.value.categoryExpensesMapped
             )
 
             Spacer(modifier = Modifier.height(16.dp))

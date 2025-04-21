@@ -61,7 +61,7 @@ class HomeScreenViewModel @Inject constructor(
 
                 val monthlyIncomeSum = incomeRepositoryData.sumOf { it.amount }
                 val monthlyExpenseSum = expenseRepositoryData.sumOf { it.amount }
-                val currentBalance = balanceRepositoryData.amount
+                val currentBalance = balanceRepositoryData?.amount ?: 0.0
                 val financialGoals = financialGoalsRepositoryData
                 val yearlyBalanceData =
                     balanceRepository.getBalanceSnapshotsOfLastYearOfUser().first()

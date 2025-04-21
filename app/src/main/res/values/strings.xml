@@ -30,4 +30,12 @@
     <string name="expense_screen_money_form_form_heading">Add New Expense</string>
     <string name="expense_screen_money_form_field_text">New Expense Amount</string>
     <string name="expense_screen_money_form_categories_text">Choose Expense category</string>
+
+    <string name="goals_screen_heading">Add a Goal</string>
+    <string name="goals_screen_subtext">App currently supports no more than 3 Goals at a time</string>
+    <string name="goals_screen_start_date_label">The Goal will start at</string>
+    <string name="goals_screen_end_date_label">The Goal will end at</string>
+    <string name="goals_screen_amount_heading">Target Amount</string>
+    <string name="goals_screen_error_no_goal_name">Enter a Goal name</string>
+    <string name="goals_screen_error_start_due_same">Give yourself some more time to complete the goal. Start and Due should not be equal.</string>
 </resources>

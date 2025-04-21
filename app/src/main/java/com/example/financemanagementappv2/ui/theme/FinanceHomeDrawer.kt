@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -36,6 +37,7 @@ import androidx.compose.ui.util.lerp
 import com.example.financemanagementappv2.data.enums.DrawerState
 import com.example.financemanagementappv2.data.enums.Screen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceExpenseScreen
+import com.example.financemanagementappv2.ui.theme.screens.FinanceGoalScreen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceHomeScreen
 import com.example.financemanagementappv2.ui.theme.screens.FinanceIncomeScreen
 import kotlinx.coroutines.launch
@@ -49,8 +51,8 @@ fun FinanceHomeDrawer(windowSizeClass: WindowSizeClass) {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        var drawerState by remember { mutableStateOf(DrawerState.Closed) }
-        var screenState by remember { mutableStateOf(Screen.Home) }
+        var drawerState by rememberSaveable { mutableStateOf(DrawerState.Closed) }
+        var screenState by rememberSaveable { mutableStateOf(Screen.Home) }
 
         // not delegateable so no by keyword is used
         // translationX represents how far the UI element has moved on the X axis
@@ -207,6 +209,12 @@ fun ScreenContents(
                 )
             Screen.Expense ->
                 FinanceExpenseScreen(
+                    windowSizeClass = windowWidthSizeClass,
+                    modifier = Modifier,
+                    onDrawerClicked = onDrawerClicked
+                )
+            Screen.Goal ->
+                FinanceGoalScreen(
                     windowSizeClass = windowWidthSizeClass,
                     modifier = Modifier,
                     onDrawerClicked = onDrawerClicked

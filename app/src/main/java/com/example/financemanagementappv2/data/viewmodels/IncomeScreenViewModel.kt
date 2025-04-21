@@ -8,12 +8,8 @@ import com.example.financemanagementappv2.data.repositories.CategoriesRepository
 import com.example.financemanagementappv2.data.repositories.IncomesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,33 +24,24 @@ class IncomeScreenViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        obtainData()
+        observeUiState()
     }
 
-    val categoryIncomesMapped: StateFlow<Map<String, Double>> =
-        _uiState
-            .map { uiState ->
-                mapIncomesInPercentToCategories(
-                    uiState.monthlyIncomes,
-                    uiState.allIncomeCategories
-                )
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyMap()
-            )
-
-    private fun obtainData() {
+    private fun observeUiState() {
         viewModelScope.launch {
+            combine(
+                incomesRepository.getAllIncomesOfCurrentMonthOfUser(),
+                categoriesRepository.getAllIncomeCategories()
+            ) { incomesRepositoryData, categoriesRepositoryData ->
 
-            val monthlyIncomes = incomesRepository.getAllIncomesOfCurrentMonthOfUser().first()
-            val allIncomeCategories = categoriesRepository.getAllIncomeCategories().first()
-
-            _uiState.value = IncomeScreenUiState(
-                monthlyIncomes = monthlyIncomes,
-                allIncomeCategories = allIncomeCategories,
-            )
+                IncomeScreenUiState(
+                    monthlyIncomes = incomesRepositoryData,
+                    allIncomeCategories = categoriesRepositoryData,
+                    categoryIncomesMapped = mapIncomesInPercentToCategories(incomesRepositoryData, categoriesRepositoryData)
+                )
+            }.collect { uiState ->
+                _uiState.value = uiState
+            }
         }
     }
 
@@ -69,7 +56,6 @@ class IncomeScreenViewModel @Inject constructor(
                 )
             )
         }
-        obtainData()
     }
 
 
@@ -81,14 +67,17 @@ class IncomeScreenViewModel @Inject constructor(
 
         val incomeByCategory: Map<Long, Double> = incomes.groupBy { it.categoryId }.mapValues { entry -> entry.value.sumOf { it.amount } }
 
-        return categories.associate { category ->
-            val categoryTotal = incomeByCategory[category.id] ?: 0.0
-            category.name to (categoryTotal / totalIncome) * 100
-        }
+        return categories
+            .filter { category -> (incomeByCategory[category.id] ?: 0.0) > 0.0 }
+            .associate { category ->
+                val categoryTotal = incomeByCategory[category.id]!!
+                category.name to (categoryTotal / totalIncome) * 100
+            }
     }
 }
 
 data class IncomeScreenUiState(
     val monthlyIncomes: List<Incomes> = emptyList<Incomes>(),
-    val allIncomeCategories: List<Categories> = emptyList<Categories>()
+    val allIncomeCategories: List<Categories> = emptyList<Categories>(),
+    val categoryIncomesMapped: Map<String, Double> = emptyMap<String, Double>()
 )

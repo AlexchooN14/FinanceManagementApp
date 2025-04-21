@@ -1,13 +1,24 @@
 package com.example.financemanagementappv2.helpers
 
+import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 object DateHelper {
     val Int.days: Long get() = this * 24L * 60 * 60 * 1000
 
     val Int.months: Long get() = this * 30L * 24 * 60 * 60 * 1000
+
+    fun Int.toMonthName(): String {
+        return DateFormatSymbols().months.getOrElse(this.coerceIn(0, 11)) { "Unknown" }
+    }
+
+    fun Date.toFormattedString(): String {
+        val simpleDateFormat = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
+        return simpleDateFormat.format(this)
+    }
 
     fun getStartOfCurrentMonthInMillis(): Long {
         val calendar = Calendar.getInstance().apply {

@@ -18,7 +18,7 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
         balanceDao.delete(balance)
     }
 
-    fun getBalanceOfUser(): Flow<Balance> {
+    fun getBalanceOfUser(): Flow<Balance?> {
         return balanceDao.getLatestBalanceOfUser()
     }
 
@@ -37,6 +37,8 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
     }
 
     fun getFormattedBalanceDataForPeriod(periodTab: PeriodTab, balanceData: List<Balance>): List<Pair<Long, Double>> {
+        if (balanceData.isEmpty()) return emptyList()
+
         val calendar = Calendar.getInstance()
         val entries = mutableListOf<Pair<Long, Double>>()
 
@@ -48,8 +50,11 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
                 var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
-                repeat(7) {
+                for (i in 0 until 7) {
                     val dayStart = calendar.timeInMillis
+                    if (dayStart > System.currentTimeMillis()) {
+                        break
+                    }
                     val dayEnd = dayStart + 1.days
 
                     val dailyBalances = balanceData.filter { it.timestamp in dayStart..<dayEnd }
@@ -76,8 +81,11 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
                 var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
-                repeat(daysInMonth) {
+                for (i in 0 until daysInMonth) {
                     val dayStart = calendar.timeInMillis
+                    if (dayStart > System.currentTimeMillis()) {
+                        break
+                    }
                     val dayEnd = dayStart + 1.days
 
                     val dailyBalances = balanceData.filter { it.timestamp in dayStart..<dayEnd }
@@ -104,9 +112,11 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
                 var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
-                repeat(6) {
+                for (i in 0 until 6) {
                     val monthStart = calendar.timeInMillis
-
+                    if (monthStart > System.currentTimeMillis()) {
+                        break
+                    }
                     calendar.add(Calendar.MONTH, 1)
                     val monthEnd = calendar.timeInMillis
 
@@ -133,9 +143,11 @@ class BalanceRepository(private val balanceDao: BalanceDao) {
                 val previousBalances = balanceData.filter { it.timestamp < calendar.timeInMillis }
                 var lastKnown = previousBalances.lastOrNull()?.amount ?: 0.0
 
-                repeat(12) {
+                for (i in 0 until 12) {
                     val monthStart = calendar.timeInMillis
-
+                    if (monthStart > System.currentTimeMillis()) {
+                        break
+                    }
                     calendar.add(Calendar.MONTH, 1)
                     val monthEnd = calendar.timeInMillis
 

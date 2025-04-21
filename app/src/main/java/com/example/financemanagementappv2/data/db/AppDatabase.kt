@@ -19,6 +19,7 @@ import com.example.financemanagementappv2.data.enums.CategoryFinancialType
 import com.example.financemanagementappv2.helpers.DateHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -45,39 +46,65 @@ abstract class AppDatabase : RoomDatabase() {
             super.onCreate(db)
 
             applicationScope.launch {
+
                 database.get().categoriesDao().insertAll(
+                    // Income Categories
                     Categories(name = "Salary", type = CategoryFinancialType.INCOME),
                     Categories(name = "Freelancing", type = CategoryFinancialType.INCOME),
                     Categories(name = "Investments", type = CategoryFinancialType.INCOME),
+                    Categories(name = "Bonus", type = CategoryFinancialType.INCOME),
+                    Categories(name = "Side Business", type = CategoryFinancialType.INCOME),
+                    Categories(name = "Rental Income", type = CategoryFinancialType.INCOME),
+
+                    // Expense Categories
                     Categories(name = "Groceries", type = CategoryFinancialType.EXPENSE),
                     Categories(name = "Rent", type = CategoryFinancialType.EXPENSE),
+                    Categories(name = "Utilities", type = CategoryFinancialType.EXPENSE),
+                    Categories(name = "Dining Out", type = CategoryFinancialType.EXPENSE),
+                    Categories(name = "Subscriptions", type = CategoryFinancialType.EXPENSE),
+                    Categories(name = "Transport", type = CategoryFinancialType.EXPENSE),
                     Categories(name = "Entertainment", type = CategoryFinancialType.EXPENSE)
                 )
 
+                /*
                 database.get().incomesDao().insertAll(
-                    Incomes(amount = 3000.00, description = "Monthly Salary", date = DateHelper.getDateForDay(1), categoryId = 1),
-                    Incomes(amount = 500.00, description = "Freelance project", date = DateHelper.getDateForDay(3), categoryId = 2),
-                    Incomes(amount = 120.00, description = "Investment dividend", date = DateHelper.getDateForDay(5), categoryId = 3),
-                    Incomes(amount = 200.00, description = "Online course revenue", date = DateHelper.getDateForDay(7), categoryId = 2),
-                    Incomes(amount = 75.00, description = "Gift from family", date = DateHelper.getDateForDay(9), categoryId = 1),
-                    Incomes(amount = 320.00, description = "Freelance design", date = DateHelper.getDateForDay(12), categoryId = 2),
-                    Incomes(amount = 150.00, description = "Stock sale", date = DateHelper.getDateForDay(15), categoryId = 3),
-                    Incomes(amount = 210.00, description = "Bonus", date = DateHelper.getDateForDay(18), categoryId = 1),
-                    Incomes(amount = 90.00, description = "Podcast revenue", date = DateHelper.getDateForDay(22), categoryId = 2),
-                    Incomes(amount = 130.00, description = "Crypto earnings", date = DateHelper.getDateForDay(28), categoryId = 3)
+                    // January
+                    Incomes(amount = 3000.0, description = "Monthly Salary", date = getTimestamp(2025, 0, 3), categoryId = 1),
+                    Incomes(amount = 500.0, description = "Freelance Logo Design",date =  getTimestamp(2025, 0, 17), categoryId = 2),
+
+                    // February
+                    Incomes(amount = 3100.0, description = "Monthly Salary", date = getTimestamp(2025, 1, 5), categoryId = 1),
+                    Incomes(amount = 600.0, description = "Consulting", date = getTimestamp(2025, 1, 19), categoryId = 2),
+
+                    // March
+                    Incomes(amount = 3200.0, description = "Monthly Salary", date = getTimestamp(2025, 2, 3), categoryId = 1),
+                    Incomes(amount = 550.0, description = "Crypto Trading", date = getTimestamp(2025, 2, 21), categoryId = 3),
+
+                    // April
+                    Incomes(amount = 3300.0, description = "Monthly Salary", date = getTimestamp(2025, 3, 4), categoryId = 1),
+                    Incomes(amount = 480.0, description = "Course Sales", date = getTimestamp(2025, 3, 14), categoryId =  2)
                 )
 
                 database.get().expensesDao().insertAll(
-                    Expenses(amount = 45.50, description = "Groceries at local market", date = DateHelper.getDateForDay(1), categoryId = 4),
-                    Expenses(amount = 1200.00, description = "April Rent", date = DateHelper.getDateForDay(2), categoryId = 5),
-                    Expenses(amount = 60.00, description = "Dinner with friends", date = DateHelper.getDateForDay(4), categoryId = 6),
-                    Expenses(amount = 30.25, description = "Snacks and drinks", date = DateHelper.getDateForDay(6), categoryId = 4),
-                    Expenses(amount = 15.00, description = "Movie ticket", date = DateHelper.getDateForDay(8), categoryId = 6),
-                    Expenses(amount = 100.00, description = "Monthly subscriptions", date = DateHelper.getDateForDay(10), categoryId = 6),
-                    Expenses(amount = 90.00, description = "Pet supplies", date = DateHelper.getDateForDay(13), categoryId = 4),
-                    Expenses(amount = 65.75, description = "Taxi fare", date = DateHelper.getDateForDay(16), categoryId = 6),
-                    Expenses(amount = 38.00, description = "Gym membership", date = DateHelper.getDateForDay(20), categoryId = 6),
-                    Expenses(amount = 22.30, description = "Lunch at cafe", date = DateHelper.getDateForDay(25), categoryId = 4)
+                    // January
+                    Expenses(amount = 800.0, description = "Rent", date = getTimestamp(2025, 0, 1), categoryId = 5),
+                    Expenses(amount = 150.0, description = "Groceries", date = getTimestamp(2025, 0, 10), categoryId = 4),
+                    Expenses(amount = 60.0, description = "Movies & Dining", date = getTimestamp(2025, 0, 22), categoryId = 6),
+
+                    // February
+                    Expenses(amount = 800.0, description = "Rent", date = getTimestamp(2025, 1, 1), categoryId = 5),
+                    Expenses(amount = 140.0, description = "Groceries", date = getTimestamp(2025, 1, 11), categoryId = 4),
+                    Expenses(amount = 70.0, description = "Streaming & Bars", date = getTimestamp(2025, 1, 23), categoryId = 6),
+
+                    // March
+                    Expenses(amount = 800.0, description = "Rent", date = getTimestamp(2025, 2, 1), categoryId = 5),
+                    Expenses(amount = 160.0, description = "Groceries", date = getTimestamp(2025, 2, 12), categoryId = 4),
+                    Expenses(amount = 90.0, description = "Weekend Trip", date = getTimestamp(2025, 2, 25), categoryId = 6),
+
+                    // April
+                    Expenses(amount = 800.0, description = "Rent", date = getTimestamp(2025, 3, 1), categoryId = 5),
+                    Expenses(amount = 150.0, description = "Groceries", date = getTimestamp(2025, 3, 10), categoryId = 4),
+                    Expenses(amount = 85.0, description = "Games & Subscriptions", date = getTimestamp(2025, 3, 20), categoryId = 6)
                 )
 
                 val totalIncome = database.get().incomesDao().getTotalSum()
@@ -105,8 +132,20 @@ abstract class AppDatabase : RoomDatabase() {
                         dueDate = System.currentTimeMillis() + 180L * 24 * 60 * 60 * 1000 // in 180 days
                     )
                 )
-
+                */
             }
+        }
+
+        fun getTimestamp(year: Int, month: Int, day: Int): Long {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            return calendar.timeInMillis
         }
     }
 }

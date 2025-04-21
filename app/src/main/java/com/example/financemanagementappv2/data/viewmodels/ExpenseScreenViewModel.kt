@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -26,33 +27,27 @@ class ExpenseScreenViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        obtainData()
+        observeUiState()
     }
 
-    val categoryExpensesMapped: StateFlow<Map<String, Double>> =
-        _uiState
-            .map { uiState ->
-                mapExpensesInPercentToCategories(
-                    uiState.monthlyExpenses,
-                    uiState.allExpenseCategories
-                )
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyMap()
-            )
-
-    private fun obtainData() {
+    private fun observeUiState() {
         viewModelScope.launch {
+            combine(
+                expensesRepository.getAllExpensesOfCurrentMonthOfUser(),
+                categoriesRepository.getAllExpenseCategories()
+            ) { expensesRepositoryData, categoriesRepositoryData ->
 
-            val monthlyExpenses = expensesRepository.getAllExpensesOfCurrentMonthOfUser().first()
-            val allIncomeCategories = categoriesRepository.getAllExpenseCategories().first()
-
-            _uiState.value = ExpenseScreenUiState(
-                monthlyExpenses = monthlyExpenses,
-                allExpenseCategories = allIncomeCategories,
-            )
+                ExpenseScreenUiState(
+                    monthlyExpenses = expensesRepositoryData,
+                    allExpenseCategories = categoriesRepositoryData,
+                    categoryExpensesMapped = mapExpensesInPercentToCategories(
+                        expensesRepositoryData,
+                        categoriesRepositoryData
+                    )
+                )
+            }.collect { uiState ->
+                _uiState.value = uiState
+            }
         }
     }
 
@@ -67,26 +62,28 @@ class ExpenseScreenViewModel @Inject constructor(
                 )
             )
         }
-        obtainData()
     }
 
 
     private fun mapExpensesInPercentToCategories(expenses: List<Expenses>, categories: List<Categories>): Map<String, Double> {
 
-        val totalIncome = expenses.sumOf { it -> it.amount }
+        val total = expenses.sumOf { it -> it.amount }
 
-        if (totalIncome == 0.0) return emptyMap()
+        if (total == 0.0) return emptyMap()
 
-        val incomeByCategory: Map<Long, Double> = expenses.groupBy { it.categoryId }.mapValues { entry -> entry.value.sumOf { it.amount } }
+        val amountByCategory: Map<Long, Double> = expenses.groupBy { it.categoryId }.mapValues { entry -> entry.value.sumOf { it.amount } }
 
-        return categories.associate { category ->
-            val categoryTotal = incomeByCategory[category.id] ?: 0.0
-            category.name to (categoryTotal / totalIncome) * 100
-        }
+        return categories
+            .filter { category -> (amountByCategory[category.id] ?: 0.0) > 0.0 }
+            .associate { category ->
+                val categoryTotal = amountByCategory[category.id]!!
+                category.name to (categoryTotal / total) * 100
+            }
     }
 }
 
 data class ExpenseScreenUiState(
     val monthlyExpenses: List<Expenses> = emptyList<Expenses>(),
-    val allExpenseCategories: List<Categories> = emptyList<Categories>()
+    val allExpenseCategories: List<Categories> = emptyList<Categories>(),
+    val categoryExpensesMapped: Map<String, Double> = emptyMap<String, Double>()
 )

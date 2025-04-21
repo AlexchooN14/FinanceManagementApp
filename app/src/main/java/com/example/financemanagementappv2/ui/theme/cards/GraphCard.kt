@@ -57,7 +57,6 @@ fun BalanceChartGraphCard(
     selectedTab: PeriodTab,
     modifier: Modifier = Modifier
 ) {
-    Log.d("BalanceChart", "balanceData: $balanceData")
     key(balanceData.hashCode()) {
         BasicInformationalCard(
             modifier = modifier,

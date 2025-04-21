@@ -17,7 +17,7 @@ interface BalanceDao {
     suspend fun delete(balance: Balance)
 
     @Query("SELECT * FROM Balance ORDER BY timestamp DESC LIMIT 1")
-    fun getLatestBalanceOfUser(): Flow<Balance>
+    fun getLatestBalanceOfUser(): Flow<Balance?>
 
     @Query("SELECT * FROM Balance WHERE timestamp >= :startOfPeriod AND timestamp <= :endOfPeriod ORDER BY timestamp ASC")
     fun getBalanceSnapshotsOfPeriodOfUser(startOfPeriod: Long, endOfPeriod: Long): Flow<List<Balance>>
